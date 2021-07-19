@@ -23,7 +23,7 @@ def get_all_entries():
             a.entry,
             a.date,
             a.mood_id
-        FROM entries a
+        FROM Entry a
         """)
 
         # Initialize an empty list to hold all animal representations
@@ -65,7 +65,7 @@ def get_single_entry(id):
             a.entry,
             a.date,
             a.mood_id
-        FROM entries a
+        FROM Entry a
         WHERE a.id = ?
         """, ( id, ))
 
@@ -76,3 +76,14 @@ def get_single_entry(id):
                             data['date'], data['mood_id'])
         
         return json.dumps(entry.__dict__)
+
+
+def delete_entry(id):
+    """Delete an entry by Id"""
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM Entry
+        WHERE id = ?
+        """, ( id, ))

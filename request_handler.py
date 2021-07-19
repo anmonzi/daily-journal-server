@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries, get_single_entry
+from entries import get_all_entries, get_single_entry, delete_entry
+from moods import get_all_moods
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
 # work together for a common purpose. In this case, that
@@ -80,6 +81,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                 response = f"{get_single_entry(id)}"
             else:
                 response = f"{get_all_entries()}"
+        if resource == "moods":
+            response = f"{get_all_moods()}"
 
         # This weird code sends a response back to the client
         self.wfile.write(response.encode())
@@ -147,27 +150,21 @@ class HandleRequests(BaseHTTPRequestHandler):
     #     self.wfile.write("".encode())
 
 
-    # def do_DELETE(self):
-    #     """Handles DELETE requests to the server
-    #     """
-    #     # Set a 204 response code
-    #     self._set_headers(204)
+    def do_DELETE(self):
+        """Handles DELETE requests to the server
+        """
+        # Set a 204 response code
+        self._set_headers(204)
 
-    #     # Parse the URL
-    #     (resource, id) = self.parse_url(self.path)
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
 
-    #     # Delete a single animal/ or dictionary from the list by id
-    #     if resource == "animals":
-    #         delete_animal(id)
-    #     elif resource == "locations":
-    #         delete_location(id)
-    #     elif resource == "employees":
-    #         delete_employee(id)
-    #     elif resource == "customers":
-    #         delete_customer(id)
+        # Delete a single animal/ or dictionary from the list by id
+        if resource == "entries":
+            delete_entry(id)
 
-    #     # Encode the new animal and send in response
-    #     self.wfile.write("".encode())
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
 
 
 # This function is not inside the class. It is the starting
