@@ -46,3 +46,33 @@ def get_all_entries():
 
     # Use `json` package to properly serialize list as JSON
     return json.dumps(entries) # converts Python object into a json string
+
+
+
+
+def get_single_entry(id):
+    """Return a single entry by Id"""
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Use a ? parameter to inject a variable's value
+        # into the SQL statement
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.concept,
+            a.entry,
+            a.date,
+            a.mood_id
+        FROM entries a
+        WHERE a.id = ?
+        """, ( id, ))
+
+        # Load the single result into memory
+        data = db_cursor.fetchone()
+        # Create an entry instance form the current row
+        entry = Entry(data['id'], data['concept'], data['entry'],
+                            data['date'], data['mood_id'])
+        
+        return json.dumps(entry.__dict__)

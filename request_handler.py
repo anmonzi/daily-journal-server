@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries
+from entries import get_all_entries, get_single_entry
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
 # work together for a common purpose. In this case, that
@@ -77,8 +77,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "entries":
             if id is not None:
-                pass
-                # response = f"{get_single_animal(id)}"
+                response = f"{get_single_entry(id)}"
             else:
                 response = f"{get_all_entries()}"
 
