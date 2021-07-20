@@ -103,6 +103,8 @@ class HandleRequests(BaseHTTPRequestHandler):
                     response = f"{get_single_entry(id)}"
                 else:
                     response = f"{get_all_entries()}"
+            if resource == "moods":
+                response = f"{get_all_moods()}"
         # Response from parse_url() is a tuple with 3
         # items in it, which means the request was for
         # `/resource?parameter=value`
@@ -116,7 +118,7 @@ class HandleRequests(BaseHTTPRequestHandler):
             
         self.wfile.write(response.encode())
     
-    
+
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
