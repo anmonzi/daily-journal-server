@@ -78,6 +78,35 @@ def get_single_entry(id):
         return json.dumps(entry.__dict__)
 
 
+def get_entry_by_search(searchTerm):
+    """Return entry(ies) via searched term"""
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(f"""
+        SELECT
+            a.id,
+            a.concept,
+            a.entry,
+            a.date,
+            a.mood_id
+        FROM Entry a
+        WHERE a.entry LIKE "%{searchTerm}%"
+        """)
+
+        entries = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            entry = Entry(row['id'], row['concept'], row['entry'],
+                            row['date'], row['mood_id'])
+            entries.append(entry.__dict__)
+
+    return json.dumps(entries)
+
+
+
 def delete_entry(id):
     """Delete an entry by Id"""
     with sqlite3.connect("./dailyjournal.db") as conn:
@@ -87,3 +116,4 @@ def delete_entry(id):
         DELETE FROM Entry
         WHERE id = ?
         """, ( id, ))
+
