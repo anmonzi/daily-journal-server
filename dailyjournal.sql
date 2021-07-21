@@ -33,3 +33,15 @@ INSERT INTO `Entry` VALUES (null, 'Javascript Debugging and Event Listeners', 'W
 
 SELECT * FROM Mood;
 SELECT * FROM Entry;
+
+SELECT
+    a.id,
+    a.concept,
+    a.entry,
+    a.date,
+    a.mood_id,
+    m.id mood_id,
+    m.label mood_label
+FROM Entry a
+JOIN mood m
+    ON m.id = a.mood_id;
