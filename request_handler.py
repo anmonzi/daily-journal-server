@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search
+from entries import get_all_entries, get_single_entry, delete_entry, get_entry_by_search, create_journal_entry
 from moods import get_all_moods
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -122,38 +122,32 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
+    def do_POST(self):
+        """Handles POST requests to the server
+        """
+        # Set response code to 'Created'
+        self._set_headers(201)
 
-    # def do_POST(self):
-    #     """Handles POST requests to the server
-    #     """
-    #     # Set response code to 'Created'
-    #     self._set_headers(201)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
 
-    #     content_len = int(self.headers.get('content-length', 0))
-    #     post_body = self.rfile.read(content_len)
+        # Convert JSON string to a Python dictionary
+        post_body = json.loads(post_body)
 
-    #     # Convert JSON string to a Python dictionary
-    #     post_body = json.loads(post_body)
+        # Parse the URL
+        (resource, _) = self.parse_url(self.path)
 
-    #     # Parse the URL
-    #     (resource, id) = self.parse_url(self.path)
+        # Initializations of new data
+        # was new_animal = None
+        # Using response to keep code DRY "don't repeat yourself"
+        response = None
 
-    #     # Initializations of new data
-    #     # was new_animal = None
-    #     # Using response to keep code DRY "don't repeat yourself"
-    #     response = None
+        # Add a new animal or other new data to the list.
+        if resource == "entries":
+            response = create_journal_entry(post_body)
+        
 
-    #     # Add a new animal or other new data to the list.
-    #     if resource == "animals":
-    #         response = create_animal(post_body)
-    #     if resource == "locations":
-    #         response = create_location(post_body)
-    #     if resource == "employees":
-    #         response = create_employee(post_body)
-    #     if resource == "customers":
-    #         response = create_customer(post_body)
-
-    #     self.wfile.write(f"{response}".encode())
+        self.wfile.write(f"{response}".encode())
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
