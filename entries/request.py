@@ -84,6 +84,8 @@ def get_single_entry(id):
         return json.dumps(entry.__dict__)
 
 
+
+
 def get_entry_by_search(searchTerm):
     """Return entry(ies) via searched term"""
     with sqlite3.connect("./dailyjournal.db") as conn:
@@ -124,6 +126,7 @@ def delete_entry(id):
         """, ( id, ))
 
 
+
 def create_journal_entry(new_entry):
     """Create an Entry"""
     with sqlite3.connect("./dailyjournal.db") as conn:
@@ -148,3 +151,31 @@ def create_journal_entry(new_entry):
         new_entry['id'] = id
 
         return json.dumps(new_entry)
+
+# SQL PUT function
+def update_entry(id, new_entry):
+    """Edit an entry by Id"""
+    with sqlite3.connect("./dailyjournal.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Entry
+            SET
+                concept = ?,
+                entry = ?,
+                date = ?,
+                mood_id = ?
+        WHERE id = ?
+        """, (new_entry['concept'], new_entry['entry'], new_entry['date'],
+                new_entry['mood_id'], id, ))
+
+        # Were any rows affected?
+        # Did the client send an `id` that exists?
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        # Forces 404 response by main module
+        return False
+        # Forces 204 response by main module
+    else:
+        return True
